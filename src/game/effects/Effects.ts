@@ -1,4 +1,8 @@
-import type Phaser from "phaser";
+import type * as Phaser from "phaser";
+
+function randomBetween(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 export function createImpact(
   scene: Phaser.Scene,
@@ -21,12 +25,12 @@ export function createImpact(
 
   for (let i = 0; i < 6; i++) {
     const angle = (Math.PI * 2 * i) / 6;
-    const distance = Phaser.Math.Between(12, 25);
+    const distance = randomBetween(12, 25);
 
     const particle = scene.add.circle(
       x,
       y,
-      Phaser.Math.Between(2, 4),
+      randomBetween(2, 4),
       color,
     );
 
@@ -52,7 +56,7 @@ export function createStylizedMark(
   const mark = scene.add.circle(
     x,
     y,
-    Phaser.Math.Between(3, 7),
+    randomBetween(3, 7),
     0x9f263b,
     0.45,
   );
