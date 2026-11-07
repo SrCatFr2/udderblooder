@@ -5,7 +5,7 @@ export default function Home() {
     <main className="app-shell">
       <header className="topbar">
         <div className="brand">
-          UDder <span>BLOODER</span>
+          UDDER <span>BLOODER</span>
         </div>
 
         <div className="status">
