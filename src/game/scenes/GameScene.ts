@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import * as Phaser from "phaser";
 
 import { GAME_SETTINGS } from "../config/settings";
 import { createHouse } from "../world/House";
