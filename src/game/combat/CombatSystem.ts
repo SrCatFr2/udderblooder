@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import type * as Phaser from "phaser";
 import { EQUIPMENT } from "./equipment";
 import { GAME_SETTINGS } from "../config/settings";
 import { createImpact, createStylizedMark } from "../effects/Effects";
