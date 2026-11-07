@@ -1,4 +1,4 @@
-import type Phaser from "phaser";
+import * as Phaser from "phaser";
 import { GAME_SETTINGS } from "../config/settings";
 
 export function createPlayer(scene: Phaser.Scene) {
