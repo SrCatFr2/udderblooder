@@ -1,4 +1,3 @@
-```ts
 import type * as Phaser from "phaser";
 import { EQUIPMENT } from "./equipment";
 import { GAME_SETTINGS } from "../config/settings";
