@@ -1,4 +1,4 @@
-import type Phaser from "phaser";
+import * as Phaser from "phaser";
 
 export type HouseDoor = {
   sprite: any;
