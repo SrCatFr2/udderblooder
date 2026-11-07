@@ -18,11 +18,9 @@ export function createHouse(scene: Phaser.Scene): HouseResult {
 
   const graphics = scene.add.graphics();
 
-  // Suelo general
   graphics.fillStyle(0x25272a);
   graphics.fillRect(0, 0, 1280, 720);
 
-  // Habitaciones
   drawRoom(scene, 40, 40, 350, 270, 0x343638);
   drawRoom(scene, 420, 40, 390, 270, 0x303234);
   drawRoom(scene, 840, 40, 400, 270, 0x343638);
@@ -31,7 +29,6 @@ export function createHouse(scene: Phaser.Scene): HouseResult {
   drawRoom(scene, 420, 370, 390, 300, 0x343638);
   drawRoom(scene, 840, 370, 400, 300, 0x303234);
 
-  // Suelo cuadriculado
   graphics.lineStyle(1, 0xffffff, 0.035);
 
   for (let x = 0; x <= 1280; x += 48) {
@@ -43,33 +40,32 @@ export function createHouse(scene: Phaser.Scene): HouseResult {
   }
 
   // Paredes exteriores
-  addWall(obstacles, 20, 20, 1240, 18);
-  addWall(obstacles, 20, 682, 1240, 18);
-  addWall(obstacles, 20, 20, 18, 680);
-  addWall(obstacles, 1242, 20, 18, 680);
+  addWall(scene, obstacles, 20, 20, 1240, 18);
+  addWall(scene, obstacles, 20, 682, 1240, 18);
+  addWall(scene, obstacles, 20, 20, 18, 680);
+  addWall(scene, obstacles, 1242, 20, 18, 680);
 
-  // Separaciones interiores
-  addWall(obstacles, 400, 40, 14, 100);
-  addWall(obstacles, 400, 210, 14, 100);
+  // Paredes interiores
+  addWall(scene, obstacles, 400, 40, 14, 100);
+  addWall(scene, obstacles, 400, 210, 14, 100);
 
-  addWall(obstacles, 820, 40, 14, 100);
-  addWall(obstacles, 820, 210, 14, 100);
+  addWall(scene, obstacles, 820, 40, 14, 100);
+  addWall(scene, obstacles, 820, 210, 14, 100);
 
-  addWall(obstacles, 40, 330, 130, 14);
-  addWall(obstacles, 235, 330, 165, 14);
+  addWall(scene, obstacles, 40, 330, 130, 14);
+  addWall(scene, obstacles, 235, 330, 165, 14);
 
-  addWall(obstacles, 420, 330, 120, 14);
-  addWall(obstacles, 610, 330, 200, 14);
+  addWall(scene, obstacles, 420, 330, 120, 14);
+  addWall(scene, obstacles, 610, 330, 200, 14);
 
-  addWall(obstacles, 840, 330, 140, 14);
-  addWall(obstacles, 1050, 330, 190, 14);
+  addWall(scene, obstacles, 840, 330, 140, 14);
+  addWall(scene, obstacles, 1050, 330, 190, 14);
 
-  // Divisiones verticales inferiores
-  addWall(obstacles, 400, 370, 14, 110);
-  addWall(obstacles, 400, 550, 14, 120);
+  addWall(scene, obstacles, 400, 370, 14, 110);
+  addWall(scene, obstacles, 400, 550, 14, 120);
 
-  addWall(obstacles, 820, 370, 14, 110);
-  addWall(obstacles, 820, 550, 14, 120);
+  addWall(scene, obstacles, 820, 370, 14, 110);
+  addWall(scene, obstacles, 820, 550, 14, 120);
 
   // Muebles
   addFurniture(scene, obstacles, 90, 100, 115, 65, 0x63534c);
@@ -124,13 +120,14 @@ function drawRoom(
 }
 
 function addWall(
+  scene: Phaser.Scene,
   group: any,
   x: number,
   y: number,
   width: number,
   height: number,
 ) {
-  const wall = group.scene.add.rectangle(
+  const wall = scene.add.rectangle(
     x + width / 2,
     y + height / 2,
     width,
@@ -139,8 +136,11 @@ function addWall(
   );
 
   wall.setStrokeStyle(1, 0xaaa4a4);
+
   group.add(wall);
-  wall.refreshBody();
+
+  const body = wall.body as Phaser.Physics.Arcade.StaticBody;
+  body.updateFromGameObject();
 
   return wall;
 }
@@ -165,18 +165,16 @@ function addFurniture(
   furniture.setStrokeStyle(2, 0x171719);
   furniture.setDepth(3);
 
-  const shadow = scene.add.rectangle(
+  scene.add.rectangle(
     x + width / 2,
     y + height - 3,
     width - 10,
     6,
     0x000000,
     0.2,
-  );
+  ).setDepth(2);
 
-  shadow.setDepth(2);
-
-  const body = scene.add.rectangle(
+  const bodyObject = scene.add.rectangle(
     x + width / 2,
     y + height / 2,
     width - 8,
@@ -185,8 +183,10 @@ function addFurniture(
     0,
   );
 
-  obstacles.add(body);
-  body.refreshBody();
+  obstacles.add(bodyObject);
+
+  const body = bodyObject.body as Phaser.Physics.Arcade.StaticBody;
+  body.updateFromGameObject();
 }
 
 function createDoor(
@@ -209,7 +209,9 @@ function createDoor(
   door.setStrokeStyle(2, 0xd0ad83);
 
   obstacles.add(door);
-  door.refreshBody();
+
+  const body = door.body as Phaser.Physics.Arcade.StaticBody;
+  body.updateFromGameObject();
 
   doors.push({
     sprite: door,
