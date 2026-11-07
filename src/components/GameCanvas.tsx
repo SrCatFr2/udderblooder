@@ -266,22 +266,24 @@ export default function GameCanvas() {
         }
 
         createItem(group: any, x: number, y: number) {
-          const item = this.add.circle(
-            x,
-            y,
-            9,
-            0xd6b75e,
-          );
+  const item = this.add.circle(
+    x,
+    y,
+    9,
+    0xd6b75e,
+  );
 
-          item.setStrokeStyle(2, 0xffe6a1);
-          item.setDepth(5);
+  item.setStrokeStyle(2, 0xffe6a1);
+  item.setDepth(5);
 
-          this.physics.add.existing(item);
+  this.physics.add.existing(item);
 
-          item.body.setCircle(9);
+  const body = item.body as Phaser.Physics.Arcade.Body;
 
-          group.add(item);
-        }
+  body.setCircle(9);
+
+  group.add(item);
+}
 
         update() {
           if (!this.player?.body) return;
