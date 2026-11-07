@@ -1,14 +1,11 @@
 import Phaser from "phaser";
-import type Phaser from "phaser";
 import type { HouseDoor } from "../world/House";
 
 export class Interactions {
-  private scene: Phaser.Scene;
   private doors: HouseDoor[];
   private message: any;
 
   constructor(scene: Phaser.Scene, doors: HouseDoor[]) {
-    this.scene = scene;
     this.doors = doors;
 
     this.message = scene.add
@@ -44,19 +41,18 @@ export class Interactions {
 
     this.message.setVisible(!!nearest);
 
-    if (nearest && interactPressed) {
-      nearest.open = !nearest.open;
+    if (!nearest || !interactPressed) return;
 
-      nearest.sprite.setVisible(!nearest.open);
+    nearest.open = !nearest.open;
+    nearest.sprite.setVisible(!nearest.open);
 
-      const body = nearest.sprite.body as any;
+    const body = nearest.sprite.body as Phaser.Physics.Arcade.StaticBody;
 
-      if (body) {
-        body.enable = !nearest.open;
+    if (body) {
+      body.enable = !nearest.open;
 
-        if (!nearest.open) {
-          nearest.sprite.refreshBody();
-        }
+      if (!nearest.open) {
+        body.updateFromGameObject();
       }
     }
   }
