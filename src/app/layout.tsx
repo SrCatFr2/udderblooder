@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Udder Blooder",
-  description: "Enter the house. Find your way out.",
+  title: "Udder Blooder — Residence 01",
+  description: "Enter the house. Explore Residence 01. Udder Blooder is a top-down arcade experience.",
   applicationName: "Udder Blooder",
 };
 
