@@ -1,21 +1,19 @@
 export const GAME_SETTINGS = {
   width: 1280,
   height: 720,
-
   player: {
-    speed: 190,
-    width: 24,
-    height: 30,
-    startX: 150,
-    startY: 150,
+    startX: 145,
+    startY: 165,
+    acceleration: 1150,
+    maxSpeed: 205,
+    sprintSpeed: 285,
+    drag: 1250,
   },
-
   combat: {
-    defaultEquipment: "arc-pulse",
-    projectileLifetime: 1400,
+    defaultEquipment: "fists",
+    projectileLifetime: 1250,
   },
-
   camera: {
-    followSpeed: 0.09,
+    followSpeed: 0.085,
   },
 };
