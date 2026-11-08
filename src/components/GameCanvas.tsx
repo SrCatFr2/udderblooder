@@ -12,11 +12,12 @@ export default function GameCanvas() {
     let cancelled = false;
 
     async function startGame() {
-      const [{ default: Phaser }, { default: GameScene }] =
-        await Promise.all([
-          import("phaser"),
-          import("@/game/scenes/GameScene"),
-        ]);
+      const [phaserModule, sceneModule] = await Promise.all([
+        import("phaser"),
+        import("@/game/scenes/GameScene"),
+      ]);
+      const Phaser = (phaserModule as any).default ?? phaserModule;
+      const GameScene = sceneModule.default;
 
       if (cancelled || !containerRef.current) return;
 
@@ -25,22 +26,18 @@ export default function GameCanvas() {
         parent: containerRef.current,
         width: 1280,
         height: 720,
-        backgroundColor: "#17191c",
+        backgroundColor: "#171a20",
         pixelArt: true,
         antialias: false,
-
+        roundPixels: true,
         physics: {
           default: "arcade",
-          arcade: {
-            debug: false,
-          },
+          arcade: { debug: false },
         },
-
         scale: {
           mode: Phaser.Scale.FIT,
           autoCenter: Phaser.Scale.CENTER_BOTH,
         },
-
         scene: [GameScene],
       });
     }
@@ -51,10 +48,7 @@ export default function GameCanvas() {
 
     return () => {
       cancelled = true;
-
-      if (game) {
-        game.destroy(true);
-      }
+      if (game) game.destroy(true);
     };
   }, []);
 
@@ -65,38 +59,27 @@ export default function GameCanvas() {
       left: { x: -1, y: 0 },
       right: { x: 1, y: 0 },
     };
-
-    const value = direction
-      ? vectors[direction]
-      : { x: 0, y: 0 };
-
-    window.dispatchEvent(
-      new CustomEvent("udder:move", {
-        detail: value,
-      }),
-    );
+    const value = direction ? vectors[direction] : { x: 0, y: 0 };
+    window.dispatchEvent(new CustomEvent("udder:move", { detail: value }));
   }
 
   function action(name: string) {
     window.dispatchEvent(new Event(`udder:${name}`));
   }
 
-  const control = (
-    direction: Direction,
-    label: string,
-    className: string,
-  ) => (
+  const control = (direction: Direction, label: string, className: string) => (
     <button
       type="button"
-      className={className}
+      className={`touch-control ${className}`}
       aria-label={label}
       onPointerDown={(event) => {
         event.preventDefault();
+        (event.currentTarget as HTMLButtonElement).setPointerCapture(event.pointerId);
         sendDirection(direction);
       }}
       onPointerUp={() => sendDirection(null)}
-      onPointerLeave={() => sendDirection(null)}
       onPointerCancel={() => sendDirection(null)}
+      onLostPointerCapture={() => sendDirection(null)}
     >
       {direction === "up" && "↑"}
       {direction === "down" && "↓"}
@@ -105,67 +88,33 @@ export default function GameCanvas() {
     </button>
   );
 
-  const actionStyle = {
-    width: 64,
-    height: 64,
-    borderRadius: "50%",
-    border: "1px solid #ffffff55",
-    background: "#17131be0",
-    color: "#ffffff",
-    fontSize: 12,
-    fontWeight: 800,
-    touchAction: "none" as const,
-    userSelect: "none" as const,
-  };
+  const actionButton = (name: string, label: string, className: string) => (
+    <button
+      type="button"
+      className={`action-control ${className}`}
+      onPointerDown={(event) => {
+        event.preventDefault();
+        action(name);
+      }}
+    >
+      {label}
+    </button>
+  );
 
   return (
-    <div
-      className="game-container"
-      ref={containerRef}
-      aria-label="Udder Blooder game"
-    >
-      <div className="control-pad">
-        {control("up", "Arriba", "control-up")}
-        {control("left", "Izquierda", "control-left")}
-        {control("down", "Abajo", "control-down")}
-        {control("right", "Derecha", "control-right")}
-      </div>
-
-      <div
-        style={{
-          position: "absolute",
-          right: 18,
-          bottom: 20,
-          display: "flex",
-          gap: 10,
-          zIndex: 10,
-        }}
-      >
-        <button
-          type="button"
-          style={actionStyle}
-          onPointerDown={(event) => {
-            event.preventDefault();
-            action("interact");
-          }}
-        >
-          USE
-        </button>
-
-        <button
-          type="button"
-          style={{
-            ...actionStyle,
-            borderColor: "#e74b55",
-            background: "#8d2735e8",
-          }}
-          onPointerDown={(event) => {
-            event.preventDefault();
-            action("attack");
-          }}
-        >
-          ACT
-        </button>
+    <div className="game-container" ref={containerRef} aria-label="Udder Blooder game">
+      <div className="mobile-controls">
+        <div className="control-pad">
+          {control("up", "Arriba", "control-up")}
+          {control("left", "Izquierda", "control-left")}
+          {control("down", "Abajo", "control-down")}
+          {control("right", "Derecha", "control-right")}
+        </div>
+        <div className="action-pad">
+          {actionButton("interact", "USE", "use")}
+          {actionButton("kick", "KICK", "kick")}
+          {actionButton("attack", "PUNCH", "attack")}
+        </div>
       </div>
     </div>
   );
